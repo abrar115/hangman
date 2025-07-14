@@ -72,11 +72,11 @@ hangman = [r'''
 blank_list = ['_' for _ in word]
 update_display = 0
 mult = 0
-
+wrong = []
 print("Would you like to play a game? Or view game history? [YG/NG] to play || [YH/NH] for game history")
 msg = input("").strip().lower()
 
-if msg == "yh":
+if msg == "yg":
     print(hangman[update_display])
     print(''.join(blank_list))
 
@@ -100,16 +100,19 @@ if msg == "yh":
 
         if not correct:
             print(f"There is no '{guess}', sorry.")
+            wrong.append(guess)
             update_display += 1
-
         print(hangman[update_display])
         print(''.join(blank_list))
-
+        print(f"Wrong Letters: {wrong}")
         if ''.join(blank_list) == word:
             print("🎉 YOU WIN!")
             with open("score.txt", "a") as f:
                 f.write("win\n")
-            break
+                with open("best_solves.txt", "a") as f:
+                         f.write(f"{update_display}\n")  # log number of wrong guesses
+    
+                break
 
     if update_display == 6:
         print("💀 GAME OVER.")
@@ -128,7 +131,7 @@ if msg == "yh":
 
 
 
-elif msg !="yg":
+elif msg =="ng":
     print("Alrighty, let me know when you'd like to play.")
 
 elif msg == "yh":
@@ -139,7 +142,16 @@ elif msg == "yh":
             losses = lines.count("loss\n")
             print(f"📊 Game History — Wins: {wins}, Losses: {losses}")
             print(f"Win Rate - {wins/(wins+losses)}")
+            with open("best_solves.txt", "r") as f:
+                solves = [int(line.strip()) for line in f.readlines()]
+            if solves:
+                best_score = min(solves)
+                print(f"🏆 Best solve with only {best_score} wrong guesses!")
+            else:
+                print("No solves logged yet.")
     except FileNotFoundError:
         print("No previous game history found.")
 elif msg == "nh":
     print("Alrighty, let me know when you'd like to view game history.")
+else:
+    print("Enter a valid option")
