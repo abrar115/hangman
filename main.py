@@ -150,7 +150,7 @@ elif msg == "yh":
             else:
                 print("No solves logged yet.")
     except FileNotFoundError:
-        print("No previous game history found.")
+        print("No previous game history found/No solve found.")
 elif msg == "nh":
     print("Alrighty, let me know when you'd like to view game history.")
 else:
